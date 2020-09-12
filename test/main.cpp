@@ -2,6 +2,7 @@
 using namespace std;
 #include "StdInOutChannel.h"
 #include "EchoRole.h"
+#include <ZinxTCP.h>
 
 //创建标准输出通道类
 class TestStdout : public Ichannel
@@ -212,7 +213,12 @@ int main()
     //4-将通道对象添加到框架
     ZinxKernel::Zinx_Add_Channel(*(new StdInChannel()));
     ZinxKernel::Zinx_Add_Channel(*(new StdOutChannel()));
+
+    ZinxKernel::Zinx_Add_Channel(*(new ZinxTCPListen(51111, new MyFact())));
+
     ZinxKernel::Zinx_Add_Role(*(new EchoRole()));
+    ZinxKernel::Zinx_Add_Role(*(new DatePreRole()));
+    ZinxKernel::Zinx_Add_Role(*(new OutputCtrl()));
 
     //5-运行框架
     ZinxKernel::Zinx_Run();

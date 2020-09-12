@@ -20,7 +20,7 @@ bool StdInChannel::Init()
 bool StdInChannel::ReadFd(std::string &_input)
 {
     cin >> _input;
-    return false;
+    return true;
 }
 
 bool StdInChannel::WriteFd(std::string &_output)
@@ -84,4 +84,15 @@ string StdOutChannel::GetChannelInfo()
 AZinxHandler *StdOutChannel::GetInputNextStage(BytesMsg &_oInput)
 {
     return nullptr;
+}
+
+AZinxHandler *MyTcpData::GetInputNextStage(BytesMsg &_oInput)
+{
+    //返回协议对象
+    return CmdCheck::GetInstance();
+}
+
+ZinxTcpData *MyFact::CreateTcpDataChannel(int _fd)
+{
+    return new MyTcpData(_fd);
 }
