@@ -3,6 +3,7 @@ using namespace std;
 #include "StdInOutChannel.h"
 #include "EchoRole.h"
 #include <ZinxTCP.h>
+#include "ZinxTimer.h"
 
 //创建标准输出通道类
 class TestStdout : public Ichannel
@@ -205,10 +206,44 @@ class TestStdin : public Ichannel
     }
 };
 
+class timerhello : public TimerOutProc
+{
+    virtual void Proc() override
+    {
+        auto pchannel = ZinxKernel::Zinx_GetChannel_ByInfo("stdout");
+        string output = "helloworld";
+        ZinxKernel::Zinx_SendOut(output, *pchannel);
+        TimerOutMng::GetInstance().DelTask(this);
+    }
+
+    virtual int GetTimeSec() override
+    {
+        return 3;
+    }
+};
+
+class timerbye : public TimerOutProc
+{
+    virtual void Proc() override
+    {
+        auto pchannel = ZinxKernel::Zinx_GetChannel_ByInfo("stdout");
+        string output = "bye";
+        ZinxKernel::Zinx_SendOut(output, *pchannel);
+    }
+
+    virtual int GetTimeSec() override
+    {
+        return 5;
+    }
+};
+
 int main()
 {
     //1-初始化框架
     ZinxKernel::ZinxKernelInit();
+
+    TimerOutMng::GetInstance().AddTask(new timerhello());
+    // TimerOutMng::GetInstance().AddTask(new timerbye());
 
     //4-将通道对象添加到框架
     ZinxKernel::Zinx_Add_Channel(*(new StdInChannel()));
@@ -219,6 +254,7 @@ int main()
     ZinxKernel::Zinx_Add_Role(*(new EchoRole()));
     ZinxKernel::Zinx_Add_Role(*(new DatePreRole()));
     ZinxKernel::Zinx_Add_Role(*(new OutputCtrl()));
+    ZinxKernel::Zinx_Add_Channel(*(new ZinxTimerChannel()));
 
     //5-运行框架
     ZinxKernel::Zinx_Run();
