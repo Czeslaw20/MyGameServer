@@ -3,12 +3,14 @@
 using namespace std;
 
 class GameChannel;
+class GameRole;
 class GameProtocol : public Iprotocol
 {
     string szLast;
 
 public:
     GameChannel *m_channel = NULL;
+    GameRole *m_Role = NULL;
     GameProtocol();
     virtual ~GameProtocol();
 

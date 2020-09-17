@@ -47,4 +47,8 @@ string GameMsg::serialize()
 
 GameMsg::~GameMsg()
 {
+    if (pMsg != NULL)
+    {
+        delete pMsg;
+    }
 }
