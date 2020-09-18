@@ -8,6 +8,8 @@
 #include <random>
 #include "ZinxTimer.h"
 #include "RandomName.h"
+#include <fstream>
+#include <hiredis/hiredis.h>
 
 using namespace std;
 
@@ -237,6 +239,20 @@ bool GameRole::Init()
         }
     }
 
+    //记录当前姓名到redis的game_name
+    //1 连接redis
+    auto contest = redisConnect("127.0.0.1", 6379);
+    if (contest != NULL)
+    {
+        freeReplyObject(redisCommand(contest, "lpush game_name %s", szName.c_str()));
+        redisFree(contest);
+    }
+
+    //2 发送lpush命令
+
+    // ofstream name_record("/tmp/name_record", ios::app);
+    // name_record << szName << endl;
+
     return bRet;
 }
 
@@ -312,6 +328,14 @@ void GameRole::Fini()
         //起退出定时器
         TimerOutMng::GetInstance().AddTask(&g_exit_timer);
     }
+
+    //从redis game_name中删掉当前姓名
+    auto contest = redisConnect("127.0.0.1", 6379);
+    if (contest != NULL)
+    {
+        freeReplyObject(redisCommand(contest, "lrem game_name 1 %s", szName.c_str()));
+        redisFree(contest);
+    }
 }
 
 int GameRole::GetX()
@@ -323,3 +347,24 @@ int GameRole::GetY()
 {
     return (int)z;
 }
+
+//从文件中删掉当前姓名
+// //1 从文件中读到所有姓名
+// list<string> cur_name_list;
+// ifstream input_stream("/tmp/name_record");
+// string tmp;
+// while (getline(input_stream, tmp))
+// {
+//     cur_name_list.push_back(tmp);
+// }
+// //2 删掉当前姓名
+
+// //3 写入其余姓名
+// ofstream output_stream("/tmp/name_record");
+// for (auto name : cur_name_list)
+// {
+//     if (name != szName)
+//     {
+//         output_stream << name << endl;
+//     }
+// }
