@@ -26,10 +26,6 @@ int stdout_channel::GetFd()
     return 1;
 }
 
-void stdout_channel::data_process(std::string _input)
-{
-}
-
 bool stdout_channel::init()
 {
     return true;
@@ -37,4 +33,9 @@ bool stdout_channel::init()
 
 void stdout_channel::fini()
 {
+}
+
+ZinxHandler *stdout_channel::GetInputNextStage(ByteMsg *_byte)
+{
+    return nullptr;
 }

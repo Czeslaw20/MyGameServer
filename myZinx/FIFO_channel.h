@@ -18,8 +18,8 @@ public:
 
     virtual void WriteFd(std::string _output) override;
     virtual int GetFd() override;
-    virtual void data_process(std::string _input) override;
 
     virtual bool init() override;
     virtual void fini() override;
+    virtual ZinxHandler *GetInputNextStage(ByteMsg *_byte) override;
 };
