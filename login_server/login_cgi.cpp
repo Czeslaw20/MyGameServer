@@ -31,6 +31,26 @@ int main()
         {
             //reply ok to client
             reply.Add("login_result", "OK");
+            string opt;
+            json.Get("opt", opt);
+            if (opt == "create_room")
+            {
+                string room_no = create_container();
+                reply.Add("room_no", room_no);
+            }
+            else if (opt == "follow_room")
+            {
+                string room_no;
+                json.Get("room_no", room_no);
+                if (check_room(room_no.c_str()) == true)
+                {
+                    reply.Add("follow_result", "OK");
+                }
+                else
+                {
+                    reply.Add("follow_result", "Failed");
+                }
+            }
         }
         else
         {
